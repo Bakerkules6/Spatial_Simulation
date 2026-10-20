@@ -16,6 +16,9 @@ global {
     // number of zebras to create
     int nb_zebras <- 20;
 
+    // distance within which a lion kills a zebra
+    float kill_distance <- 2.0;
+
     init {
         create lion number: nb_lions;
         create zebra number: nb_zebras;
@@ -30,6 +33,14 @@ species lion {
     reflex wander {
         // move to a random nearby location each cycle
         do wander amplitude: 90.0 speed: 1.0;
+    }
+
+    reflex hunt when: !empty(zebra) {
+        // find all zebras within kill_distance and kill them
+        list<zebra> prey <- zebra at_distance kill_distance;
+        ask prey {
+            do die;
+        }
     }
 
     aspect default {
@@ -55,6 +66,7 @@ grid savannah_cell width: 100 height: 100 {
 experiment Main type: gui {
     parameter "Number of lions" var: nb_lions min: 1 max: 100;
     parameter "Number of zebras" var: nb_zebras min: 1 max: 100;
+    parameter "Kill distance" var: kill_distance min: 0.5 max: 10.0;
 
     output {
         display "Savannah" {
