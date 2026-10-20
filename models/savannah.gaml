@@ -32,13 +32,35 @@ global {
     file lion_icon <- file("../includes/lion.png");
     file zebra_icon <- file("../includes/zebra.png");
 
+    // ── milestone trackers ──
+    // cycle and wall-clock time when all zebras died
+    int cycle_all_zebras_dead <- -1;
+    float time_all_zebras_dead <- -1.0;
+
+    // cycle and wall-clock time when biomass covers the whole grid
+    int cycle_full_biomass <- -1;
+    float time_full_biomass <- -1.0;
+
     init {
         create lion number: nb_lions;
         create zebra number: nb_zebras;
     }
 
-    // pause when all zebras are dead and every cell has full biomass
-    reflex stop_sim when: empty(zebra) and (savannah_cell min_of each.biomass >= 1.0) {
+    // ── milestone reflexes ──
+    // record the moment all zebras are dead (fires once)
+    reflex record_zebras_dead when: cycle_all_zebras_dead < 0 and empty(zebra) {
+        cycle_all_zebras_dead <- cycle;
+        time_all_zebras_dead <- machine_time;
+    }
+
+    // record the moment biomass covers the whole grid (fires once)
+    reflex record_full_biomass when: cycle_full_biomass < 0 and (savannah_cell min_of each.biomass >= 1.0) {
+        cycle_full_biomass <- cycle;
+        time_full_biomass <- machine_time;
+    }
+
+    // pause/halt when both milestones have been reached
+    reflex stop_sim when: cycle_all_zebras_dead >= 0 and cycle_full_biomass >= 0 {
         do pause;
     }
 }
@@ -132,5 +154,33 @@ experiment Main type: gui {
         monitor "Elapsed time (ms)" value: machine_time;
         monitor "Zebras alive" value: length(zebra);
         monitor "Mean biomass" value: mean(savannah_cell collect each.biomass) with_precision 3;
+    }
+}
+
+
+experiment Batch type: batch repeat: 5 until: (cycle_all_zebras_dead >= 0 and cycle_full_biomass >= 0) or cycle > 5000 {
+    parameter "Kill distance" var: kill_distance among: [1.0, 2.0];
+
+    // write one row per finished simulation run
+    permanent {
+        display "Batch results" refresh: every(1 #cycle) {
+            chart "Cycles to all zebras dead" type: box_whisker {
+                data "kill_distance" value: cycle_all_zebras_dead
+                    categorized_by: kill_distance;
+            }
+        }
+    }
+
+    reflex save_results {
+        ask simulations {
+            save [
+                int(self),
+                kill_distance,
+                cycle_all_zebras_dead,
+                time_all_zebras_dead,
+                cycle_full_biomass,
+                time_full_biomass
+            ] to: "../results/batch_results.csv" format: "csv" rewrite: false;
+        }
     }
 }
