@@ -9,12 +9,40 @@ model Savannah
 global {
     // world size matches the grid dimensions
     int grid_size <- 100;
+
+    // number of lions to create
+    int nb_lions <- 20;
+
+    init {
+        create lion number: nb_lions;
+    }
+}
+
+species lion {
+    // random initial position is the default for 'create'
+
+    float size <- 3.0;
+
+    reflex wander {
+        // move to a random nearby location each cycle
+        do wander amplitude: 90.0 speed: 1.0;
+    }
+
+    aspect default {
+        draw circle(size) color: #orange;
+    }
 }
 
 grid savannah_cell width: 100 height: 100 {
 }
 
 experiment Main type: gui {
+    parameter "Number of lions" var: nb_lions min: 1 max: 100;
+
     output {
+        display "Savannah" {
+            grid savannah_cell;
+            species lion;
+        }
     }
 }
