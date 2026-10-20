@@ -25,6 +25,13 @@ global {
     // fraction of neighbour biomass that spreads each cycle
     float biomass_spread_rate <- 0.05;
 
+    // toggle between image icons and simple shapes
+    bool use_images <- true;
+
+    // preload image files from the includes folder
+    file lion_icon <- file("../includes/lion.png");
+    file zebra_icon <- file("../includes/zebra.png");
+
     init {
         create lion number: nb_lions;
         create zebra number: nb_zebras;
@@ -55,7 +62,11 @@ species lion {
     }
 
     aspect default {
-        draw circle(size) color: #orange;
+        if use_images {
+            draw lion_icon size: size;
+        } else {
+            draw circle(size) color: #orange;
+        }
     }
 }
 
@@ -67,7 +78,11 @@ species zebra {
     }
 
     aspect default {
-        draw triangle(size) color: #grey;
+        if use_images {
+            draw zebra_icon size: size;
+        } else {
+            draw triangle(size) color: #grey;
+        }
     }
 }
 
@@ -97,6 +112,7 @@ experiment Main type: gui {
     parameter "Kill distance" var: kill_distance min: 0.5 max: 10.0;
     parameter "Biomass growth rate" var: biomass_growth_rate min: 0.001 max: 0.1;
     parameter "Biomass spread rate" var: biomass_spread_rate min: 0.01 max: 0.2;
+    parameter "Use image icons" var: use_images;
 
     output {
         display "Savannah" {
