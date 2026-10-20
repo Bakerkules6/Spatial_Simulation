@@ -13,8 +13,12 @@ global {
     // number of lions to create
     int nb_lions <- 20;
 
+    // number of zebras to create
+    int nb_zebras <- 20;
+
     init {
         create lion number: nb_lions;
+        create zebra number: nb_zebras;
     }
 }
 
@@ -33,16 +37,30 @@ species lion {
     }
 }
 
+species zebra {
+    float size <- 2.0;
+
+    reflex wander {
+        do wander amplitude: 90.0 speed: 1.0;
+    }
+
+    aspect default {
+        draw triangle(size) color: #grey;
+    }
+}
+
 grid savannah_cell width: 100 height: 100 {
 }
 
 experiment Main type: gui {
     parameter "Number of lions" var: nb_lions min: 1 max: 100;
+    parameter "Number of zebras" var: nb_zebras min: 1 max: 100;
 
     output {
         display "Savannah" {
             grid savannah_cell;
             species lion;
+            species zebra;
         }
     }
 }
