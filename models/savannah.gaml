@@ -29,6 +29,11 @@ global {
         create lion number: nb_lions;
         create zebra number: nb_zebras;
     }
+
+    // pause when all zebras are dead and every cell has full biomass
+    reflex stop_sim when: empty(zebra) and (savannah_cell min_of each.biomass >= 1.0) {
+        do pause;
+    }
 }
 
 species lion {
@@ -99,5 +104,17 @@ experiment Main type: gui {
             species lion;
             species zebra;
         }
+
+        display "Charts" refresh: every(1 #cycle) {
+            chart "Population & Biomass" type: series {
+                data "Zebras alive" value: length(zebra) color: #grey;
+                data "Mean biomass" value: mean(savannah_cell collect each.biomass) color: #green;
+            }
+        }
+
+        monitor "Cycle" value: cycle;
+        monitor "Elapsed time (ms)" value: machine_time;
+        monitor "Zebras alive" value: length(zebra);
+        monitor "Mean biomass" value: mean(savannah_cell collect each.biomass) with_precision 3;
     }
 }
