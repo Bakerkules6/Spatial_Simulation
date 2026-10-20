@@ -33,7 +33,10 @@ global {
     file zebra_icon <- file("../includes/zebra.png");
 
     // ── milestone trackers ──
-    // cycle and wall-clock time when all zebras died
+    // wall-clock timestamp at simulation start (ms)
+    float start_time;
+
+    // cycle and elapsed time (ms) when all zebras died
     int cycle_all_zebras_dead <- -1;
     float time_all_zebras_dead <- -1.0;
 
@@ -42,6 +45,7 @@ global {
     float time_full_biomass <- -1.0;
 
     init {
+        start_time <- machine_time;
         create lion number: nb_lions;
         create zebra number: nb_zebras;
     }
@@ -50,13 +54,13 @@ global {
     // record the moment all zebras are dead (fires once)
     reflex record_zebras_dead when: cycle_all_zebras_dead < 0 and empty(zebra) {
         cycle_all_zebras_dead <- cycle;
-        time_all_zebras_dead <- machine_time;
+        time_all_zebras_dead <- machine_time - start_time;
     }
 
     // record the moment biomass covers the whole grid (fires once)
     reflex record_full_biomass when: cycle_full_biomass < 0 and (savannah_cell min_of each.biomass >= 1.0) {
         cycle_full_biomass <- cycle;
-        time_full_biomass <- machine_time;
+        time_full_biomass <- machine_time - start_time;
     }
 
     // pause/halt when both milestones have been reached
@@ -153,7 +157,7 @@ experiment Main type: gui {
         }
 
         monitor "Cycle" value: cycle;
-        monitor "Elapsed time (ms)" value: machine_time;
+        monitor "Elapsed time (ms)" value: machine_time - start_time;
         monitor "Zebras alive" value: length(zebra);
         monitor "Mean biomass" value: mean(savannah_cell collect each.biomass) with_precision 3;
     }
