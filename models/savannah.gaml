@@ -76,10 +76,12 @@ species lion {
     }
 
     reflex hunt when: !empty(zebra) {
-        // find all zebras within kill_distance and kill them
+        // find zebras within kill_distance and kill one
         list<zebra> prey <- zebra at_distance kill_distance;
-        ask prey {
-            do die;
+        if (!empty(prey)) {
+            ask one_of(prey) {
+                do die;
+            }
         }
     }
 
