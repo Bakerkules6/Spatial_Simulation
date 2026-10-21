@@ -6,17 +6,19 @@ Environment: A square grid of cells (assumption: 100x100). Each cell has a bioma
 
 Agents:
 - 20 lions, drawn as orange circles of size 3, moving randomly.
-- 20 zebras, drawn as grey triangles of size 2, moving randomly.
+- 20 zebras, drawn as grey triangles of size 2. Zebras eat the biomass of the cell they stand on (parameter: bite size) and move towards cells with more biomass.
 Both are placed at random positions at initialisation.
 
-Interaction: When a zebra is within a kill distance (parameter, default 3.0 units) of a lion, the lion kills it and the zebra is removed.
+Interaction: When a zebra is within a kill distance (parameter, default 2.0 units) of a lion, the lion kills it and the zebra is removed.
 
 Stop condition: The simulation pauses when no zebras remain and the biomass covers the whole grid.
 
 Outputs: Cycle count, elapsed time, number of zebras alive, and mean biomass, shown in a display and a chart.
 
-Parameters to expose: number of lions, number of zebras, kill distance, biomass growth rate.
+Parameters to expose: number of lions, number of zebras, kill distance, biomass growth rate, bite size.
 
-Extension (Step 4, not for now): Zebras eat grass. Lions gain energy by eating zebras and lose energy when moving.
+Extension (Step 4):
+- Zebras eat grass: zebras consume biomass on their cell up to their bite size and move toward neighboring cells with higher biomass.
+- (Future): Lions gain energy by eating zebras and lose energy when moving.
 
 Acceptance criteria per feature: the model runs without errors, and the behaviour matches the description above.

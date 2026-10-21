@@ -25,6 +25,9 @@ global {
     // fraction of neighbour biomass that spreads each cycle
     float biomass_spread_rate <- 0.05;
 
+    // amount of biomass a zebra consumes per cycle
+    float bite_size <- 0.05;
+
     // toggle between image icons and simple shapes
     bool use_images <- true;
 
@@ -105,8 +108,27 @@ species lion skills: [moving] {
 species zebra skills: [moving] {
     float size <- 2.0;
 
-    reflex wander {
-        do wander amplitude: 90.0 speed: 1.0;
+    reflex eat {
+        savannah_cell current_cell <- savannah_cell(location);
+        if (current_cell != nil and current_cell.biomass > 0.0) {
+            float eaten <- min(current_cell.biomass, bite_size);
+            current_cell.biomass <- current_cell.biomass - eaten;
+        }
+    }
+
+    reflex move {
+        savannah_cell current_cell <- savannah_cell(location);
+        if (current_cell != nil) {
+            list<savannah_cell> richer_cells <- current_cell.neighbors where (each.biomass > current_cell.biomass);
+            if (!empty(richer_cells)) {
+                savannah_cell target_cell <- richer_cells with_max_of (each.biomass);
+                do goto target: target_cell speed: 1.0;
+            } else {
+                do wander amplitude: 90.0 speed: 1.0;
+            }
+        } else {
+            do wander amplitude: 90.0 speed: 1.0;
+        }
     }
 
     aspect default {
@@ -144,6 +166,7 @@ experiment Main type: gui {
     parameter "Kill distance" var: kill_distance min: 0.5 max: 10.0;
     parameter "Biomass growth rate" var: biomass_growth_rate min: 0.001 max: 0.1;
     parameter "Biomass spread rate" var: biomass_spread_rate min: 0.01 max: 0.2;
+    parameter "Zebra bite size" var: bite_size min: 0.01 max: 0.5;
     parameter "Use image icons" var: use_images;
 
     output {
