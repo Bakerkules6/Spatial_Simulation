@@ -73,7 +73,7 @@ global {
     }
 }
 
-species lion {
+species lion skills: [moving] {
     // random initial position is the default for 'create'
 
     float size <- 3.0;
@@ -102,7 +102,7 @@ species lion {
     }
 }
 
-species zebra {
+species zebra skills: [moving] {
     float size <- 2.0;
 
     reflex wander {
