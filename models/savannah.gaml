@@ -28,9 +28,9 @@ global {
     // toggle between image icons and simple shapes
     bool use_images <- true;
 
-    // preload image files from the includes folder
-    file lion_icon <- file("../includes/lion.png");
-    file zebra_icon <- file("../includes/zebra.png");
+    // image files – loaded in init only when use_images is true
+    file lion_icon;
+    file zebra_icon;
 
     // ── milestone trackers ──
     // wall-clock timestamp at simulation start (ms)
@@ -46,6 +46,10 @@ global {
 
     init {
         start_time <- machine_time;
+        if use_images {
+            lion_icon <- file("../includes/lion.png");
+            zebra_icon <- file("../includes/zebra.png");
+        }
         create lion number: nb_lions;
         create zebra number: nb_zebras;
     }
@@ -90,7 +94,7 @@ species lion {
     }
 
     aspect default {
-        if use_images {
+        if use_images and lion_icon != nil {
             draw lion_icon size: size;
         } else {
             draw circle(size) color: #orange;
@@ -106,7 +110,7 @@ species zebra {
     }
 
     aspect default {
-        if use_images {
+        if use_images and zebra_icon != nil {
             draw zebra_icon size: size;
         } else {
             draw triangle(size) color: #grey;
