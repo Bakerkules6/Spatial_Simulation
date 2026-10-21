@@ -28,6 +28,11 @@ global {
     // amount of biomass a zebra consumes per cycle
     float bite_size <- 0.05;
 
+    // lion energetics parameters
+    float lion_initial_energy <- 50.0;
+    float lion_move_energy_loss <- 0.5;
+    float lion_kill_energy_gain <- 20.0;
+
     // toggle between image icons and simple shapes
     bool use_images <- true;
 
@@ -80,10 +85,15 @@ species lion skills: [moving] {
     // random initial position is the default for 'create'
 
     float size <- 3.0;
+    float energy <- lion_initial_energy;
 
     reflex wander {
         // move to a random nearby location each cycle
         do wander amplitude: 90.0 speed: 1.0;
+        energy <- energy - lion_move_energy_loss;
+        if (energy <= 0.0) {
+            do die;
+        }
     }
 
     reflex hunt when: !empty(zebra) {
@@ -93,6 +103,7 @@ species lion skills: [moving] {
             ask one_of(prey) {
                 do die;
             }
+            energy <- energy + lion_kill_energy_gain;
         }
     }
 
@@ -167,6 +178,9 @@ experiment Main type: gui {
     parameter "Biomass growth rate" var: biomass_growth_rate min: 0.001 max: 0.1;
     parameter "Biomass spread rate" var: biomass_spread_rate min: 0.01 max: 0.2;
     parameter "Zebra bite size" var: bite_size min: 0.01 max: 0.5;
+    parameter "Lion initial energy" var: lion_initial_energy min: 5.0 max: 200.0;
+    parameter "Lion move energy loss" var: lion_move_energy_loss min: 0.1 max: 5.0;
+    parameter "Lion kill energy gain" var: lion_kill_energy_gain min: 5.0 max: 100.0;
     parameter "Use image icons" var: use_images;
 
     output {
@@ -179,13 +193,22 @@ experiment Main type: gui {
         display "Charts" refresh: every(1 #cycle) {
             chart "Population & Biomass" type: series {
                 data "Zebras alive" value: length(zebra) color: #grey;
+                data "Lions alive" value: length(lion) color: #orange;
                 data "Mean biomass" value: mean(savannah_cell collect each.biomass) color: #green;
+            }
+        }
+
+        display "Lion Energy" refresh: every(1 #cycle) {
+            chart "Mean Lion Energy" type: series {
+                data "Mean energy" value: empty(lion) ? 0.0 : mean(lion collect each.energy) color: #orange;
             }
         }
 
         monitor "Cycle" value: cycle;
         monitor "Elapsed time (ms)" value: machine_time - start_time;
         monitor "Zebras alive" value: length(zebra);
+        monitor "Lions alive" value: length(lion);
+        monitor "Mean lion energy" value: empty(lion) ? 0.0 : (mean(lion collect each.energy) with_precision 2);
         monitor "Mean biomass" value: mean(savannah_cell collect each.biomass) with_precision 3;
     }
 }
