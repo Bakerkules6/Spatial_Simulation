@@ -20,8 +20,8 @@ global {
     float bite_size <- 1.0;
 
     // Asset icons
-    file zebra_icon <- file("../includes/zebra.png");
-    file lion_icon <- file("../includes/lion.png");
+    image zebra_image <- image("../includes/zebra.png");
+    image lion_image <- image("../includes/lion.png");
 
     init {
         create zebra number: initial_nb_zebras {
@@ -56,7 +56,7 @@ species lion skills: [moving] {
     }
 
     aspect default {
-        draw lion_icon size: 5;
+        draw lion_image size: 5;
     }
 }
 
@@ -86,7 +86,7 @@ species zebra skills: [moving] {
     }
 
     aspect default {
-        draw zebra_icon size: 5;
+        draw zebra_image size: 5;
     }
 }
 
@@ -124,14 +124,14 @@ experiment main_experiment type: gui {
             species lion aspect: default;
         }
 
-        display "Population Dynamics" refresh: every(1 #cycle) {
+        display "Population Dynamics" type: 2d refresh: every(1 #cycle) {
             chart "Population Over Time" type: series {
                 data "Zebras" value: length(zebra) color: #blue;
                 data "Lions" value: length(lion) color: #orange;
             }
         }
 
-        display "Energy Dynamics" refresh: every(1 #cycle) {
+        display "Energy Dynamics" type: 2d refresh: every(1 #cycle) {
             chart "Mean Energy Over Time" type: series {
                 data "Mean Lion Energy" value: empty(lion) ? 0.0 : mean(lion collect each.energy) color: #orange;
                 data "Mean Zebra Energy" value: empty(zebra) ? 0.0 : mean(zebra collect each.energy) color: #green;
