@@ -1,17 +1,41 @@
 /**
  * Name: Savannah
- * Description: Step 2 - Adding zebra species with movement and grazing behavior.
- * Step: 2 - Zebras & Grazing
+ * Description: Step 3 - Adding lions species with movement and predation to complete the baseline model.
+ * Step: 3 - Lions & Baseline Predation
  */
 
 model Savannah
 
 global {
     file zebra_icon <- file_exists("../includes/zebra.png") ? file("../includes/zebra.png") : (file_exists("includes/zebra.png") ? file("includes/zebra.png") : nil);
+    file lion_icon <- file_exists("../includes/lion.png") ? file("../includes/lion.png") : (file_exists("includes/lion.png") ? file("includes/lion.png") : nil);
 
     init {
         create zebra number: 20 {
             speed <- 1.0;
+        }
+        create lions number: 20 {
+            speed <- 1.2;
+        }
+    }
+}
+
+species lions skills: [moving] {
+    reflex lion_move {
+        do wander amplitude: 60.0;
+        list<zebra> nearby <- zebra where (each distance_to self < 1.0);
+        if (!empty(nearby)) {
+            ask one_of(nearby) {
+                do die;
+            }
+        }
+    }
+
+    aspect default {
+        if (lion_icon != nil) {
+            draw lion_icon size: 5;
+        } else {
+            draw circle(2) color: #orange;
         }
     }
 }
@@ -64,6 +88,7 @@ experiment main_experiment type: gui {
         display map {
             species my_CA aspect: default;
             species zebra aspect: default;
+            species lions aspect: default;
         }
     }
 }
