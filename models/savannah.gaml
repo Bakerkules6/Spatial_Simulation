@@ -1,16 +1,16 @@
 /**
  * Name: Savannah
  * Description: Savannah ABM with dynamic energy tracking, metabolism, and predation energetics for both lions and zebras.
- * Step: 6 - Energy Dynamics & Population Monitoring
  */
 
 model Savannah
 
 global {
-    // Parameter definitions
+    // Population parameters
     int initial_nb_zebras <- 20;
     int initial_nb_lions <- 20;
 
+    // Metabolic and predation parameters
     float lion_initial_energy <- 10.0;
     float lion_move_energy_loss <- 0.2;
     float lion_kill_energy_gain <- 5.0;
@@ -19,9 +19,9 @@ global {
     float zebra_move_energy_loss <- 0.1;
     float bite_size <- 1.0;
 
-    // Asset icons with safe fallback
-    file zebra_icon <- file_exists("../includes/zebra.png") ? file("../includes/zebra.png") : (file_exists("includes/zebra.png") ? file("includes/zebra.png") : nil);
-    file lion_icon <- file_exists("../includes/lion.png") ? file("../includes/lion.png") : (file_exists("includes/lion.png") ? file("includes/lion.png") : nil);
+    // Asset icons
+    file zebra_icon <- file("../includes/zebra.png");
+    file lion_icon <- file("../includes/lion.png");
 
     init {
         create zebra number: initial_nb_zebras {
@@ -42,7 +42,6 @@ species lion skills: [moving] {
         do wander amplitude: 60.0;
         energy <- energy - lion_move_energy_loss;
         
-        // Scan for prey within kill distance
         list<zebra> nearby <- (zebra at_distance 1.0) where (!dead(each));
         if (!empty(nearby)) {
             ask one_of(nearby) {
@@ -51,18 +50,13 @@ species lion skills: [moving] {
             energy <- energy + lion_kill_energy_gain;
         }
 
-        // Starvation condition
         if (energy <= 0.0) {
             do die;
         }
     }
 
     aspect default {
-        if (lion_icon != nil) {
-            draw lion_icon size: 5;
-        } else {
-            draw circle(2) color: #orange;
-        }
+        draw lion_icon size: 5;
     }
 }
 
@@ -73,7 +67,6 @@ species zebra skills: [moving] {
         do wander amplitude: 35.0;
         energy <- energy - zebra_move_energy_loss;
 
-        // Starvation condition
         if (energy <= 0.0) {
             do die;
         }
@@ -93,11 +86,7 @@ species zebra skills: [moving] {
     }
 
     aspect default {
-        if (zebra_icon != nil) {
-            draw zebra_icon size: 5;
-        } else {
-            draw triangle(2) color: #grey;
-        }
+        draw zebra_icon size: 5;
     }
 }
 
@@ -109,7 +98,7 @@ grid my_CA {
     }
 
     aspect default {
-        draw shape color: rgb(
+        draw square(1) color: rgb(
             100 - int(biomass * 7),
             220 - int(biomass * 10),
             80 - int(biomass * 5),
