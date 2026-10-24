@@ -1,7 +1,7 @@
 /**
  * Name: Savannah
- * Description: Step 3 - Adding lions species with movement and predation to complete the baseline model.
- * Step: 3 - Lions & Baseline Predation
+ * Description: Savannah ABM baseline model - Refactored for spatial indexing, singular species naming, and adaptive grid rendering.
+ * Step: 4 - Refinements & Optimization
  */
 
 model Savannah
@@ -14,16 +14,16 @@ global {
         create zebra number: 20 {
             speed <- 1.0;
         }
-        create lions number: 20 {
+        create lion number: 20 {
             speed <- 1.2;
         }
     }
 }
 
-species lions skills: [moving] {
+species lion skills: [moving] {
     reflex lion_move {
         do wander amplitude: 60.0;
-        list<zebra> nearby <- zebra where (each distance_to self < 1.0);
+        list<zebra> nearby <- (zebra at_distance 1.0) where (!dead(each));
         if (!empty(nearby)) {
             ask one_of(nearby) {
                 do die;
@@ -74,7 +74,7 @@ grid my_CA {
     }
 
     aspect default {
-        draw square(1) color: rgb(
+        draw shape color: rgb(
             100 - int(biomass * 7),
             220 - int(biomass * 10),
             80 - int(biomass * 5),
@@ -88,7 +88,7 @@ experiment main_experiment type: gui {
         display map {
             species my_CA aspect: default;
             species zebra aspect: default;
-            species lions aspect: default;
+            species lion aspect: default;
         }
     }
 }
