@@ -1,6 +1,6 @@
 /**
  * Name: Savannah
- * Description: Savannah ABM with dynamic energy tracking, metabolism, and predation energetics for both lions and zebras.
+ * Description: Savannah ABM with dynamic energy tracking, metabolism, configurable predation kill distance, and monitoring charts.
  */
 
 model Savannah
@@ -14,6 +14,7 @@ global {
     float lion_initial_energy <- 10.0;
     float lion_move_energy_loss <- 0.2;
     float lion_kill_energy_gain <- 5.0;
+    float kill_distance <- 2.0;
 
     float zebra_initial_energy <- 10.0;
     float zebra_move_energy_loss <- 0.1;
@@ -42,7 +43,8 @@ species lion skills: [moving] {
         do wander amplitude: 60.0;
         energy <- energy - lion_move_energy_loss;
         
-        list<zebra> nearby <- (zebra at_distance 1.0) where (!dead(each));
+        // Scan for prey within configurable kill distance
+        list<zebra> nearby <- (zebra at_distance kill_distance) where (!dead(each));
         if (!empty(nearby)) {
             ask one_of(nearby) {
                 do die;
@@ -50,6 +52,7 @@ species lion skills: [moving] {
             energy <- energy + lion_kill_energy_gain;
         }
 
+        // Starvation condition
         if (energy <= 0.0) {
             do die;
         }
@@ -67,6 +70,7 @@ species zebra skills: [moving] {
         do wander amplitude: 35.0;
         energy <- energy - zebra_move_energy_loss;
 
+        // Starvation condition
         if (energy <= 0.0) {
             do die;
         }
@@ -110,6 +114,7 @@ grid my_CA {
 experiment main_experiment type: gui {
     parameter "Initial Zebras" var: initial_nb_zebras min: 1 max: 100;
     parameter "Initial Lions" var: initial_nb_lions min: 1 max: 100;
+    parameter "Lion Kill Distance" var: kill_distance min: 0.5 max: 10.0;
     parameter "Lion Initial Energy" var: lion_initial_energy min: 1.0 max: 50.0;
     parameter "Lion Move Energy Cost" var: lion_move_energy_loss min: 0.05 max: 2.0;
     parameter "Lion Kill Energy Gain" var: lion_kill_energy_gain min: 1.0 max: 20.0;
