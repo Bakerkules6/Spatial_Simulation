@@ -36,6 +36,14 @@ global {
             add age to: age_list;
         }
     }
+
+    reflex report_ages {
+        int nb_ages <- length(age_list);
+        int min_age <- empty(age_list) ? 0 : min(age_list);
+        float mean_age <- empty(age_list) ? 0.0 : mean(age_list);
+        int max_age <- empty(age_list) ? 0 : max(age_list);
+        write "Cycle " + cycle + " | Age list count: " + nb_ages + " | Min: " + min_age + " | Mean: " + (mean_age with_precision 2) + " | Max: " + max_age;
+    }
 }
 
 species lion skills: [moving] {
@@ -155,6 +163,10 @@ experiment main_experiment type: gui {
 
         monitor "Zebras Alive" value: length(zebra);
         monitor "Lions Alive" value: length(lion);
+        monitor "Age List Count" value: length(age_list);
+        monitor "Min Lion Age" value: empty(age_list) ? 0 : min(age_list);
+        monitor "Mean Lion Age" value: empty(age_list) ? 0.0 : (mean(age_list) with_precision 2);
+        monitor "Max Lion Age" value: empty(age_list) ? 0 : max(age_list);
         monitor "Mean Lion Energy" value: empty(lion) ? 0.0 : (mean(lion collect each.energy) with_precision 2);
         monitor "Mean Zebra Energy" value: empty(zebra) ? 0.0 : (mean(zebra collect each.energy) with_precision 2);
         monitor "Mean Biomass" value: mean(my_CA collect each.biomass) with_precision 2;
