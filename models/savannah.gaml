@@ -77,7 +77,10 @@ species lion skills: [moving] {
     }
 
     aspect default {
-        draw lion_image size: 5;
+        float mean_age <- empty(age_list) ? 0.0 : mean(age_list);
+        int red_shade <- int(min([255, max([50, (mean_age / 60.0) * 255])]));
+        draw circle(2.5) color: rgb(red_shade, 0, 0);
+        draw lion_image size: 5 color: rgb(red_shade, 0, 0);
     }
 }
 
