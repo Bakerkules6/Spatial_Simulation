@@ -33,6 +33,7 @@ global {
         create lion number: initial_nb_lions {
             speed <- 1.2;
             energy <- lion_initial_energy;
+            add age to: age_list;
         }
     }
 }
@@ -40,6 +41,12 @@ global {
 species lion skills: [moving] {
     float energy;
     int age <- rnd(0, 60);
+
+    reflex aging {
+        remove age from: age_list;
+        age <- age + 1;
+        add age to: age_list;
+    }
 
     reflex lion_move {
         do wander amplitude: 60.0;
@@ -56,6 +63,7 @@ species lion skills: [moving] {
 
         // Starvation condition
         if (energy <= 0.0) {
+            remove age from: age_list;
             do die;
         }
     }
