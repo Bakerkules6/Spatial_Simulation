@@ -53,7 +53,18 @@ species lion skills: [moving] {
     reflex aging {
         remove age from: age_list;
         age <- age + 1;
-        add age to: age_list;
+        if (age > 60) {
+            create lion number: 1 {
+                speed <- 1.2;
+                energy <- lion_initial_energy;
+                age <- 0;
+                location <- myself.location;
+                add age to: age_list;
+            }
+            do die;
+        } else {
+            add age to: age_list;
+        }
     }
 
     reflex lion_move {
