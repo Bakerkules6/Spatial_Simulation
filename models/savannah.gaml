@@ -1,7 +1,3 @@
-/**
- * Name: Savannah
- * Description: Savannah ABM with dynamic energy tracking, metabolism, configurable predation kill distance, and monitoring charts.
- */
 
 model Savannah
 
