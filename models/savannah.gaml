@@ -9,6 +9,7 @@ global {
     // Population parameters
     int initial_nb_zebras <- 20;
     int initial_nb_lions <- 20;
+    list<int> age_list <- [];
 
     // Metabolic and predation parameters
     float lion_initial_energy <- 10.0;
@@ -38,6 +39,7 @@ global {
 
 species lion skills: [moving] {
     float energy;
+    int age <- rnd(0, 60);
 
     reflex lion_move {
         do wander amplitude: 60.0;
