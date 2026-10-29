@@ -18,7 +18,6 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 4. **Predator Dynamics (Lion Wandering & Baseline Predation)**
 5. **Code Review, Semantic Verification & Refactoring**
 6. **Bioenergetic Dynamics & Starvation Extension**
-7. **Academic Reporting (IMRaD Markdown & Formatted DOCX with Figure Frames)**
 
 ---
 
@@ -65,7 +64,7 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 ---
 
 ### Phase 5: Code Review, Semantic Verification & Refactoring
-* **User Prompt (Prompt 5):** Conduct a line-by-line comparison against original `African_savannah.gaml`. Identify naming inconsistencies, potential runtime flaws (hardcoded paths, bounds), and verify `my_CA(location)` spatial casting semantics. User approved recommendations ("yesž").
+* **User Prompt (Prompt 5):** Conduct a line-by-line comparison against original `African_savannah.gaml`. Identify naming inconsistencies, potential runtime flaws (hardcoded paths, bounds), and verify `my_CA(location)` spatial casting semantics. User approved recommendations ("yes").
 * **Key Findings & Fixes:**
   1. *Naming Inconsistency:* Fixed asymmetrical naming by renaming `species lions` to singular `species lion`.
   2. *Spatial Query Performance:* Replaced brute-force $O(N)$ linear filter `zebra where (each distance_to self < 1.0)` with quadtree-indexed spatial operator `(zebra at_distance 1.0) where (!dead(each))` to protect against concurrency race conditions.
@@ -87,23 +86,6 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 
 ---
 
-### Phase 7: Academic IMRaD Report (Markdown)
-* **User Prompt (Prompt 7):** Draft a concise 1-page academic report following the IMRaD structure (Introduction, Methods, Results, Discussion).
-* **AI Action:** Authored [`REPORT.md`](file:///C:/Users/timig/Desktop/Salzburg%20master/3_SEMESTER/Spatial%20Simulation/Antigravity-Test/REPORT.md) synthesizing objective, model architecture, baseline vs. metabolic results, and critical reflection on AI-assisted modeling.
-* **Git Commit:** `b4eaa3c` — `docs: add 1-page IMRaD academic report on savannah ABM experiment`
-
----
-
-### Phase 8: Formatted DOCX Report with Figure Frames
-* **User Prompt:** Generate a 1-page `.docx` report matching the format and header style of previous assignment `GABRIJAN_SavannahABM_Report1.docx` and leave space for images.
-* **AI Action:**
-  * Analyzed layout, table widths, typography, and section margins of `GABRIJAN_Report1.docx`.
-  * Generated [`GABRIJAN_SavannahABM_Report2.docx`](file:///C:/Users/timig/Desktop/Salzburg%20master/3_SEMESTER/Spatial%20Simulation/Antigravity-Test/GABRIJAN_SavannahABM_Report2.docx) (and synced to `Weekly Reports/`).
-  * Structured a 3-column frame table for simulation figures (Figure 1: Map Display, Figure 2: Population Series, Figure 3: Energy Dynamics) with precise 1-page page-budget calibration.
-* **Git Commit:** `49ea24e` — `docs: add formatted 1-page docx academic report with image placeholders`
-
----
-
 ## 3. Git Commit History Summary
 
 | Commit Hash | Author | Message |
@@ -114,8 +96,6 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 | `873ef8f` | Timi | `feat(step-3): add lions species with movement and predation behavior` |
 | `f9444a3` | Timi | `refactor: standardize species naming, optimize spatial indexing, and use adaptive cell shapes` |
 | `6fa4b0e` | Timi | `feat(step-6): introduce metabolic energy dynamics, starvation, and monitoring charts` |
-| `b4eaa3c` | Timi | `docs: add 1-page IMRaD academic report on savannah ABM experiment` |
-| `49ea24e` | Timi | `docs: add formatted 1-page docx academic report with image placeholders` |
 
 ---
 
