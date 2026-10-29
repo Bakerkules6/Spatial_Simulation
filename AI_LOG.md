@@ -1,9 +1,9 @@
 # AI Interaction & Workflow Log: Savannah ABM Simulation
 
-**Project:** Spatial Simulation (Unit 1 & Unit 2 Extension) — Savannah ABM  
+**Project:** Spatial Simulation (Unit 1, Unit 2 & Age Dynamics Extension) — Savannah ABM  
 **Platform:** GAMA Modeling Platform (GAML)  
 **Collaborators:** Timotej Gabrijan (Student #12526937) & Jarvis (Antigravity AI Assistant)  
-**Date:** 24 October 2026  
+**Date:** 29 October 2026  
 **Repository Branch:** `master`
 
 ---
@@ -18,6 +18,7 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 4. **Predator Dynamics (Lion Wandering & Baseline Predation)**
 5. **Code Review, Semantic Verification & Refactoring**
 6. **Bioenergetic Dynamics & Starvation Extension**
+7. **Lion Age Dynamics, Population Age Statistics, Visual Age Shading & Reproduction**
 
 ---
 
@@ -86,6 +87,49 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 
 ---
 
+### Phase 7: Lion Age Dynamics, Statistical Reporting, Dynamic Colouring & Reproduction (29 October 2026)
+
+#### Planning Phase
+* **User Prompt:** *"Use the `models\savannah.gaml` and prepare the plan of prompts to do step by step: • Declare a list of age values • In the initialisation, add the age of all lions to the list, in a reflex function add current and remove previous age values. • Each time step, report the number of values in the list, their minimum, mean and maximum values. • Update the colour of agents in different shades of red according to the mean age of the population • lions die if they are older than 60 years • just before an old lion dies, a baby lion is born. After each section commit to git after each prompt"*
+* **AI Action:** Formulated a structured 5-step prompt execution plan with atomic Git commits after each step.
+
+#### Step 7.1: Declare Age List and Lion Age Attribute
+* **User Prompt:** *"Execute step 1"*
+* **AI Action:**
+  * Declared `list<int> age_list <- [];` in the `global` block of [`models/savannah.gaml`](file:///C:/Users/timig/Desktop/Salzburg%20master/3_SEMESTER/Spatial%20Simulation/Antigravity-Test/models/savannah.gaml).
+  * Added `int age <- rnd(0, 60);` to the `lion` species.
+* **Git Commit:** `b8f9222` — `Step 1: Declare global age_list and lion age attribute`
+
+#### Step 7.2: Initialise Age List & Update via Reflex Function
+* **User Prompt:** *"step 2"*
+* **AI Action:**
+  * Added `add age to: age_list;` inside the `create lion` block in `global` `init`.
+  * Implemented `reflex aging` in `species lion` to remove the previous `age` from `age_list`, increment `age <- age + 1;`, and append the updated `age` to `age_list`.
+  * Added cleanup (`remove age from: age_list;`) when a lion dies of starvation so `age_list` remains synchronized with living lions.
+* **Git Commit:** `5cad28f` — `Step 2: Initialize lion ages in age_list and update via aging reflex`
+
+#### Step 7.3: Report Count, Minimum, Mean, and Maximum Age Values Each Time Step
+* **User Prompt:** *"step 3"*
+* **AI Action:**
+  * Added `reflex report_ages` to `global` to compute and log `length(age_list)`, `min(age_list)`, `mean(age_list)`, and `max(age_list)` to the console at every simulation cycle.
+  * Added real-time GUI monitors (`Age List Count`, `Min Lion Age`, `Mean Lion Age`, `Max Lion Age`) in `experiment main_experiment`.
+* **Git Commit:** `3bdcdf6` — `Step 3: Report count, min, mean, and max of age_list each time step`
+
+#### Step 7.4: Dynamic Agent Colour in Shades of Red by Mean Population Age
+* **User Prompt:** *"step 4"*
+* **AI Action:**
+  * Updated `aspect default` in `species lion` to compute `red_shade` dynamically from `mean(age_list)` (`int(min([255, max([50, (mean_age / 60.0) * 255])]))`) and render the agent in `rgb(red_shade, 0, 0)`.
+* **Git Commit:** `a1537a7` — `Step 4: Update lion colour in shades of red based on mean population age`
+
+#### Step 7.5: Age Mortality (> 60 Years) & Baby Lion Birth
+* **User Prompt:** *"step 5"*
+* **AI Action:**
+  * Extended `reflex aging` in `species lion` to check `if (age > 60)`.
+  * Just before the old lion dies (`do die;`), it spawns a baby lion (`create lion number: 1`) at its location with `age <- 0`, `energy <- lion_initial_energy`, and adds the baby's age (`0`) to `age_list`.
+* **Git Commit:** `d06b390` — `Step 5: Lions older than 60 die and spawn a baby lion`
+
+---
+
 ## 3. Git Commit History Summary
 
 | Commit Hash | Author | Message |
@@ -96,6 +140,11 @@ The project followed an **incremental, prompt-driven engineering workflow** with
 | `873ef8f` | Timi | `feat(step-3): add lions species with movement and predation behavior` |
 | `f9444a3` | Timi | `refactor: standardize species naming, optimize spatial indexing, and use adaptive cell shapes` |
 | `6fa4b0e` | Timi | `feat(step-6): introduce metabolic energy dynamics, starvation, and monitoring charts` |
+| `b8f9222` | Timi | `Step 1: Declare global age_list and lion age attribute` |
+| `5cad28f` | Timi | `Step 2: Initialize lion ages in age_list and update via aging reflex` |
+| `3bdcdf6` | Timi | `Step 3: Report count, min, mean, and max of age_list each time step` |
+| `a1537a7` | Timi | `Step 4: Update lion colour in shades of red based on mean population age` |
+| `d06b390` | Timi | `Step 5: Lions older than 60 die and spawn a baby lion` |
 
 ---
 
