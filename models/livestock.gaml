@@ -5,6 +5,9 @@ global {
     int nb_sheep <- 3;
     int nb_goats <- 2;
 
+    image fence_image <- image("../includes/fence.png");
+    image pond_image <- image("../includes/pond.png");
+
     init {
         create cow number: nb_cows {
             speed <- 2.0;
@@ -38,7 +41,6 @@ species sheep skills: [moving] {
     }
 
     aspect action_neighbourhood {
-        draw circle(speed) color: rgb(255, 191, 0, 50) border: rgb(255, 191, 0);
         draw line([location, {location.x, location.y + speed}]) color: rgb(255, 191, 0);
     }
 
@@ -53,8 +55,9 @@ species goat skills: [moving] {
     }
 
     aspect action_neighbourhood {
-        draw circle(speed) color: rgb(128, 128, 128, 50) border: #grey;
-        draw line([location, {0, 0}]) color: #grey;
+        float dist <- location distance_to {0, 0};
+        point next_step <- (dist > speed) ? {location.x - (location.x / dist) * speed, location.y - (location.y / dist) * speed} : {0, 0};
+        draw line([location, next_step]) color: #grey;
     }
 
     aspect default {
@@ -71,6 +74,10 @@ experiment main_experiment type: gui {
         display "Livestock Map" type: 2d {
             graphics "Background" transparency: 0.7 {
                 draw world.shape color: rgb(144, 238, 144);
+            }
+            graphics "Environment Assets" {
+                draw pond_image size: 15 at: {8, 8};
+                draw fence_image size: 106 at: {50, 50};
             }
             species cow aspect: action_neighbourhood;
             species sheep aspect: action_neighbourhood;
