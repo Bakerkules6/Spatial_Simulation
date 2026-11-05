@@ -28,7 +28,7 @@ species cow skills: [moving] {
     }
 
     aspect default {
-        draw square(3.0) color: #black;
+        draw square(1.5) color: #black;
     }
 }
 
@@ -38,12 +38,12 @@ species sheep skills: [moving] {
     }
 
     aspect action_neighbourhood {
-        draw circle(speed) color: rgb(255, 191, 0, 50) border: #amber;
-        draw line([location, {location.x, location.y + speed}]) color: #amber;
+        draw circle(speed) color: rgb(255, 191, 0, 50) border: rgb(255, 191, 0);
+        draw line([location, {location.x, location.y + speed}]) color: rgb(255, 191, 0);
     }
 
     aspect default {
-        draw ellipse(3.0, 1.8) color: #amber;
+        draw ellipse(1.0, 0.6) color: rgb(255, 191, 0);
     }
 }
 
@@ -58,9 +58,9 @@ species goat skills: [moving] {
     }
 
     aspect default {
-        draw triangle(2.5) color: #grey;
+        draw triangle(1.0) color: #grey;
     }
-}
+}	
 
 experiment main_experiment type: gui {
     parameter "Number of Cows" var: nb_cows min: 1 max: 50;
