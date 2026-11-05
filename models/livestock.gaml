@@ -9,7 +9,9 @@ global {
         create cow number: nb_cows {
             speed <- 2.0;
         }
-        create sheep number: nb_sheep;
+        create sheep number: nb_sheep {
+            speed <- 1.0;
+        }
         create goat number: nb_goats;
     }
 }
@@ -24,7 +26,11 @@ species cow skills: [moving] {
     }
 }
 
-species sheep {
+species sheep skills: [moving] {
+    reflex sheep_move {
+        do move speed: speed heading: 90.0;
+    }
+
     aspect default {
         draw ellipse(3.0, 1.8) color: #amber;
     }
