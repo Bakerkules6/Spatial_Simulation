@@ -69,6 +69,9 @@ experiment main_experiment type: gui {
 
     output {
         display "Livestock Map" type: 2d {
+            graphics "Background" transparency: 0.7 {
+                draw world.shape color: rgb(144, 238, 144);
+            }
             species cow aspect: action_neighbourhood;
             species sheep aspect: action_neighbourhood;
             species goat aspect: action_neighbourhood;
