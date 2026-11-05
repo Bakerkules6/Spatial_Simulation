@@ -21,11 +21,19 @@ global {
         create sheep number: nb_sheep {
             speed <- 1.0;
             heading <- 90.0;
+            going_south <- true;
             location <- {rnd(20.0, 90.0), rnd(15.0, 90.0)};
         }
+        list<point> goat_locations <- [{80.0, 25.0}, {25.0, 80.0}];
+        int goat_idx <- 0;
         create goat number: nb_goats {
             speed <- 0.5;
-            location <- {rnd(25.0, 90.0), rnd(25.0, 90.0)};
+            if (goat_idx < length(goat_locations)) {
+                location <- goat_locations[goat_idx];
+            } else {
+                location <- {rnd(25.0, 90.0), rnd(25.0, 90.0)};
+            }
+            goat_idx <- goat_idx + 1;
         }
     }
 }
@@ -39,10 +47,23 @@ species cow skills: [moving] {
             speed <- 0.0;
         } else {
             do wander speed: speed amplitude: 90.0;
-            if (location.x <= fence_min or location.x >= fence_max or location.y <= fence_min or location.y >= fence_max) {
-                location <- {min([fence_max, max([fence_min, location.x])]), min([fence_max, max([fence_min, location.y])])};
-                heading <- mod(heading + 180.0, 360.0);
+
+            if (location.x <= fence_min) {
+                location <- {fence_min + speed, location.y};
+                heading <- rnd(-45.0, 45.0);
+            } else if (location.x >= fence_max) {
+                location <- {fence_max - speed, location.y};
+                heading <- rnd(135.0, 225.0);
             }
+
+            if (location.y <= fence_min) {
+                location <- {location.x, fence_min + speed};
+                heading <- rnd(45.0, 135.0);
+            } else if (location.y >= fence_max) {
+                location <- {location.x, fence_max - speed};
+                heading <- rnd(225.0, 315.0);
+            }
+
             if ((location distance_to pond_location) <= pond_radius) {
                 stopped <- true;
                 speed <- 0.0;
@@ -62,19 +83,27 @@ species cow skills: [moving] {
 }
 
 species sheep skills: [moving] {
+    bool going_south <- true;
+
     reflex sheep_move {
-        do move speed: speed heading: heading;
+        float current_heading <- going_south ? 90.0 : 270.0;
+        heading <- current_heading;
+        do move speed: speed heading: current_heading;
+
         if (location.y >= fence_max) {
             location <- {location.x, fence_max};
+            going_south <- false;
             heading <- 270.0;
         } else if (location.y <= fence_min) {
             location <- {location.x, fence_min};
+            going_south <- true;
             heading <- 90.0;
         }
     }
 
     aspect action_neighbourhood {
-        draw line([location, {location.x + speed * cos(heading), location.y + speed * sin(heading)}]) color: rgb(255, 191, 0);
+        float dy <- going_south ? speed : -speed;
+        draw line([location, {location.x, location.y + dy}]) color: rgb(255, 191, 0);
     }
 
     aspect default {
