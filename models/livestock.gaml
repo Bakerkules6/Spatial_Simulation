@@ -6,13 +6,19 @@ global {
     int nb_goats <- 2;
 
     init {
-        create cow number: nb_cows;
+        create cow number: nb_cows {
+            speed <- 2.0;
+        }
         create sheep number: nb_sheep;
         create goat number: nb_goats;
     }
 }
 
-species cow {
+species cow skills: [moving] {
+    reflex cow_move {
+        do wander speed: speed amplitude: 90.0;
+    }
+
     aspect default {
         draw square(3.0) color: #black;
     }
