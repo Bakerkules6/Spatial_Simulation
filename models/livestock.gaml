@@ -23,6 +23,10 @@ species cow skills: [moving] {
         do wander speed: speed amplitude: 90.0;
     }
 
+    aspect action_neighbourhood {
+        draw circle(speed) intersection cone(int(heading - 45), int(heading + 45)) color: rgb(0, 0, 0, 50) border: #black;
+    }
+
     aspect default {
         draw square(3.0) color: #black;
     }
@@ -33,6 +37,11 @@ species sheep skills: [moving] {
         do move speed: speed heading: 90.0;
     }
 
+    aspect action_neighbourhood {
+        draw circle(speed) color: rgb(255, 191, 0, 50) border: #amber;
+        draw line([location, {location.x, location.y + speed}]) color: #amber;
+    }
+
     aspect default {
         draw ellipse(3.0, 1.8) color: #amber;
     }
@@ -41,6 +50,11 @@ species sheep skills: [moving] {
 species goat skills: [moving] {
     reflex goat_move {
         do goto target: {0, 0} speed: speed;
+    }
+
+    aspect action_neighbourhood {
+        draw circle(speed) color: rgb(128, 128, 128, 50) border: #grey;
+        draw line([location, {0, 0}]) color: #grey;
     }
 
     aspect default {
@@ -55,6 +69,9 @@ experiment main_experiment type: gui {
 
     output {
         display "Livestock Map" type: 2d {
+            species cow aspect: action_neighbourhood;
+            species sheep aspect: action_neighbourhood;
+            species goat aspect: action_neighbourhood;
             species cow aspect: default;
             species sheep aspect: default;
             species goat aspect: default;
