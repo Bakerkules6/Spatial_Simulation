@@ -12,7 +12,9 @@ global {
         create sheep number: nb_sheep {
             speed <- 1.0;
         }
-        create goat number: nb_goats;
+        create goat number: nb_goats {
+            speed <- 0.5;
+        }
     }
 }
 
@@ -36,7 +38,11 @@ species sheep skills: [moving] {
     }
 }
 
-species goat {
+species goat skills: [moving] {
+    reflex goat_move {
+        do goto target: {0, 0} speed: speed;
+    }
+
     aspect default {
         draw triangle(2.5) color: #grey;
     }
